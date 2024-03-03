@@ -11,7 +11,9 @@ const cors = require("cors");
 const app = express();
 const mysql = require("mysql2");
 
+app.use(express.json());
 app.use(cors());
+
 
 const connection = mysql.createConnection(process.env.DATABASE_URL);
 
@@ -36,4 +38,23 @@ app.get("/foodname", (req, res) => {
   });
 });
 
-app.listen(process.env.PORT || 5000);
+app.post("/addmenu", function (req, res)  {
+  connection.query(
+    "INSERT INTO `tbl_menu`(`menuID`, `menuName`) VALUES (?, ?)",
+    [req.body.menuID, req.body.menuName],
+
+    function (err, results) {
+      if (err) throw err;
+      return res.send({
+        err: false,
+        data: results,
+        message: "New menu has been created successfully.",
+      });
+    }
+  );
+});
+
+
+  
+
+app.listen(process.env.PORT || 5500);
